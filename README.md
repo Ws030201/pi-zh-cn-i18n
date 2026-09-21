@@ -62,13 +62,13 @@ pi install npm:pi-zh-cn
 ### 方式二：从 GitHub 安装
 
 ```bash
-pi install git:github.com/<username>/pi-zh-cn
+pi install git:github.com/Ws030201/pi-zh-cn-i18n
 ```
 
 固定版本：
 
 ```bash
-pi install git:github.com/<username>/pi-zh-cn@v1.0.0
+pi install git:github.com/Ws030201/pi-zh-cn-i18n@v1.0.0
 ```
 
 ### 方式三：本地目录 / `.tgz` 安装（离线）
@@ -103,7 +103,7 @@ pi update --extensions
 Git 安装的包会跟随设置的 ref（标签 / 提交），如需换版本：
 
 ```bash
-pi install git:github.com/<username>/pi-zh-cn@v1.1.0
+pi install git:github.com/Ws030201/pi-zh-cn-i18n@v1.1.0
 ```
 
 ---
@@ -117,7 +117,7 @@ pi remove npm:pi-zh-cn
 Git / 本地安装同理：
 
 ```bash
-pi remove git:github.com/<username>/pi-zh-cn
+pi remove git:github.com/Ws030201/pi-zh-cn-i18n
 pi remove /absolute/path/to/pi-zh-cn
 ```
 

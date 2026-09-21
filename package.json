@@ -37,12 +37,12 @@
 	},
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/REPLACE_WITH_YOUR_USERNAME/pi-zh-cn.git"
+		"url": "git+https://github.com/Ws030201/pi-zh-cn-i18n.git"
 	},
 	"bugs": {
-		"url": "https://github.com/REPLACE_WITH_YOUR_USERNAME/pi-zh-cn/issues"
+		"url": "https://github.com/Ws030201/pi-zh-cn-i18n/issues"
 	},
-	"homepage": "https://github.com/REPLACE_WITH_YOUR_USERNAME/pi-zh-cn#readme",
+	"homepage": "https://github.com/Ws030201/pi-zh-cn-i18n#readme",
 	"scripts": {
 		"test": "node tests/run.mjs"
 	}
