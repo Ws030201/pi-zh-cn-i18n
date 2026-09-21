@@ -9,7 +9,7 @@
 ### 新增
 
 - 独立的 Pi 包结构：`package.json` 声明 `pi.extensions`，可通过
-  `pi install npm:pi-zh-cn` / `pi install git:...` 安装。
+  `pi install npm:pi-zh-cn-i18n` / `pi install git:...` 安装。
 - 源代码重组为 `src/translations.ts`（唯一词典）、`src/commands.ts`
   （补全与 `/help`）、`src/tui.ts`（组件补丁）、`src/utils.ts`
   （宽度安全层 + 补丁注册表）。

@@ -1,4 +1,4 @@
-# pi-zh-cn
+# pi-zh-cn-i18n
 
 > Pi 编码代理的**简体中文界面**扩展（Pi Extension Package）。
 > 通过官方 Extension / TUI API 实现，**不修改 Pi 核心源码，也不修改 `node_modules`**。
@@ -54,7 +54,7 @@
 ### 方式一：从 npm 安装（推荐）
 
 ```bash
-pi install npm:pi-zh-cn
+pi install npm:pi-zh-cn-i18n
 ```
 
 安装后执行 `/reload`，或重启 Pi。
@@ -94,7 +94,7 @@ pi -e /absolute/path/to/pi-zh-cn
 
 ```bash
 # 更新单个包
-pi update npm:pi-zh-cn
+pi update npm:pi-zh-cn-i18n
 
 # 更新所有已安装的扩展包
 pi update --extensions
@@ -111,7 +111,7 @@ pi install git:github.com/Ws030201/pi-zh-cn-i18n@v1.1.0
 ## 卸载方法
 
 ```bash
-pi remove npm:pi-zh-cn
+pi remove npm:pi-zh-cn-i18n
 ```
 
 Git / 本地安装同理：
