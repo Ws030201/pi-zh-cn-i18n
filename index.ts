@@ -39,41 +39,66 @@ function ensurePatched(): void {
 	}
 }
 
+/** 安全调用可选 API：函数不存在或抛错都静默跳过。 */
+function safeCall(fn: () => void): void {
+	try {
+		fn();
+	} catch {
+		// 忽略：不同 Pi 版本的可选 API 差异
+	}
+}
+
+/** 取 ctx.ui 的宽松视图，便于做能力探测。 */
+function uiOf(ctx: unknown): Record<string, unknown> {
+	return ((ctx as { ui?: unknown } | undefined)?.ui ?? {}) as Record<string, unknown>;
+}
+
+/** 调用 ctx.ui 上的可选方法（自动能力探测，无则跳过）。 */
+function callUi(ui: Record<string, unknown>, method: string, ...args: unknown[]): void {
+	safeCall(() => {
+		const fn = ui[method];
+		if (typeof fn === "function") (fn as (...a: unknown[]) => unknown).apply(ui, args);
+	});
+}
+
 export default function piZhCnExtension(pi: ExtensionAPI): void {
 	// 0) 运行时组件层汉化（越早安装越好）
 	ensurePatched();
 
-	// 1) /help 命令与中文条目渲染器
+	// 1) /help 命令与中文条目渲染器（内部已做版本能力探测）
 	registerHelpCommand(pi);
 	registerZhRenderers(pi);
+
+	// Pi 极早期版本可能没有 pi.on，此时静默跳过事件注册。
+	if (typeof pi.on !== "function") return;
 
 	// 2) 会话启动：安装补全菜单中文化包装器，并中文化状态信息
 	pi.on("session_start", async (event, ctx) => {
 		// 重载 / 会话替换后重新安装，保证词典是最新的。
 		ensurePatched();
 
+		const ui = uiOf(ctx);
 		// 核心：在原补全提供器外层包一层，只改写命令的显示名称/说明。
 		// 在 RPC / 打印模式下该方法是安全的空操作。
-		ctx.ui.addAutocompleteProvider(createZhAutocompleteProvider);
-
-		ctx.ui.setStatus("pi-zh-cn", zh.statusActive);
-		ctx.ui.setHiddenThinkingLabel(zh.hiddenThinking);
+		callUi(ui, "addAutocompleteProvider", createZhAutocompleteProvider);
+		callUi(ui, "setStatus", "pi-zh-cn", zh.statusActive);
+		callUi(ui, "setHiddenThinkingLabel", zh.hiddenThinking);
 		if (event.reason === "startup") {
-			ctx.ui.notify(zh.notifyReady, "info");
+			callUi(ui, "notify", zh.notifyReady, "info");
 		}
 	});
 
 	// 3) 中文化流式工作提示
 	pi.on("agent_start", async (_event, ctx) => {
-		ctx.ui.setWorkingMessage(zh.working);
+		callUi(uiOf(ctx), "setWorkingMessage", zh.working);
 	});
 	pi.on("agent_settled", async (_event, ctx) => {
 		// 不传参数即恢复 Pi 默认的工作提示
-		ctx.ui.setWorkingMessage();
+		callUi(uiOf(ctx), "setWorkingMessage");
 	});
 
 	// 4) 会话结束清理状态栏
 	pi.on("session_shutdown", async (_event, ctx) => {
-		ctx.ui.setStatus("pi-zh-cn", undefined);
+		callUi(uiOf(ctx), "setStatus", "pi-zh-cn", undefined);
 	});
 }

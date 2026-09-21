@@ -2,6 +2,17 @@
 
 本项目遵循 [语义化版本](https://semver.org/lang/zh-CN/)。
 
+## [1.0.1] - 2026-09-21
+
+### 修复
+
+- **兼容旧版 Pi**：`pi.registerEntryRenderer` 仅在 Pi `0.80.4+` 提供。现在所有可选
+  API（`registerEntryRenderer`、`ctx.ui.addAutocompleteProvider`、
+  `setHiddenThinkingLabel`、`setWorkingMessage`、`setStatus`、`notify`、
+  `getCommands`、`appendEntry`）都会先做能力探测，缺失时静默降级，
+  不再导致整个扩展加载失败（`pi.registerEntryRenderer is not a function`）。
+- `/help` 在旧版 Pi 上回退为通知输出。
+
 ## [1.0.0] - 2026-09-21
 
 首个独立分发的 Pi Extension Package 版本。

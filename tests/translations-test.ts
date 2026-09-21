@@ -25,6 +25,7 @@ import {
 	translateMarkdown,
 	translatePlain,
 } from "../src/translations";
+import { registerHelpCommand, registerZhRenderers } from "../src/commands";
 import { installTuiPatches } from "../src/tui";
 import { registerTranslator } from "../src/utils";
 
@@ -158,6 +159,27 @@ export default function (pi: ExtensionAPI) {
 				results.push(check("UserMessage selector", rendered.includes("从消息分叉")));
 			} catch (error) {
 				results.push("FAIL UserMessage selector: " + String(error));
+			}
+
+			// ---- 向后兼容：旧版 Pi 缺少可选 API 时不应导致扩展加载失败 ----
+			try {
+				const fakePi: any = {
+					registerCommand: (_name: string, def: any) => {
+						fakePi._cmd = def;
+					},
+					getCommands: () => [],
+					on: () => {},
+					// 故意不提供 registerEntryRenderer / appendEntry（模拟旧版 Pi）
+				};
+				registerZhRenderers(fakePi);
+				registerHelpCommand(fakePi);
+				results.push(check("old Pi: registerZhRenderers no-throw", true));
+				results.push(check("old Pi: /help registered", !!fakePi._cmd));
+				let notified = "";
+				await fakePi._cmd.handler("", { ui: { notify: (m: string) => (notified = m) } });
+				results.push(check("old Pi: /help handler fallback", notified.includes("Pi 命令帮助")));
+			} catch (error) {
+				results.push("FAIL old Pi compat: " + String(error));
 			}
 
 			ctx.ui.notify("ZHTEST\n" + results.join("\n"), "info");

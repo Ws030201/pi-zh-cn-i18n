@@ -37,7 +37,19 @@ function markdownRenderer(): EntryRenderer<string> {
 
 /** 注册条目标题渲染器。 */
 export function registerZhRenderers(pi: ExtensionAPI): void {
-	pi.registerEntryRenderer(ENTRY_HELP, markdownRenderer());
+	// registerEntryRenderer 是 Pi 0.80.4+ 才有的 API。旧版没有时静默跳过，
+	// /help 条目会回退为默认显示，绝不让整个扩展加载失败。
+	try {
+		const register = (pi as unknown as { registerEntryRenderer?: unknown }).registerEntryRenderer;
+		if (typeof register !== "function") return;
+		(register as (type: string, renderer: EntryRenderer<string>) => void).call(
+			pi,
+			ENTRY_HELP,
+			markdownRenderer(),
+		);
+	} catch {
+		// 忽略：旧版 Pi 无此 API，或私有实现变化
+	}
 }
 
 /**
@@ -174,8 +186,9 @@ export function buildHelpMarkdown(pi: ExtensionAPI): string {
 	lines.push("```");
 
 	// 其他扩展 / 技能 / 提示模板命令保持原样列出，避免与官方命令混淆。
-	const others = pi
-		.getCommands()
+	// getCommands 在极旧版本可能不存在；缺失时只跳过「其他命令」列表。
+	const allCommands = typeof pi.getCommands === "function" ? pi.getCommands() : [];
+	const others = allCommands
 		.filter((command) => !commandLabels[command.name])
 		.map((command) => {
 			const tag = command.source === "skill" ? "技能" : command.source === "prompt" ? "提示模板" : "扩展";
@@ -196,10 +209,29 @@ export function buildHelpMarkdown(pi: ExtensionAPI): string {
 
 /** 注册 /help 命令。 */
 export function registerHelpCommand(pi: ExtensionAPI): void {
-	pi.registerCommand("help", {
-		description: formatCommandLabel(commandLabels.help),
-		handler: async (_args, _ctx) => {
-			pi.appendEntry(ENTRY_HELP, buildHelpMarkdown(pi));
-		},
-	});
+	if (typeof pi.registerCommand !== "function") return;
+	try {
+		pi.registerCommand("help", {
+			description: formatCommandLabel(commandLabels.help),
+			handler: async (_args, ctx) => {
+				const markdown = buildHelpMarkdown(pi);
+				// 首选持久化显示条目（Pi 0.80.4+ 有自定义渲染器；更早版本也能 appendEntry）。
+				try {
+					if (typeof pi.appendEntry === "function") {
+						pi.appendEntry(ENTRY_HELP, markdown);
+						return;
+					}
+				} catch {
+					// 回退到通知
+				}
+				try {
+					ctx?.ui?.notify?.(markdown, "info");
+				} catch {
+					// 忽略
+				}
+			},
+		});
+	} catch {
+		// 忽略：注册命令失败不应影响扩展加载
+	}
 }
