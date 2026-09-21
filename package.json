@@ -1,0 +1,49 @@
+{
+	"name": "pi-zh-cn",
+	"version": "1.0.0",
+	"description": "Pi 编码代理的简体中文界面汉化扩展：命令补全、二级页面（设置 / 模型 / 会话 / 对话树 / 帮助 / 快捷键）、状态栏与提示全部中文化，并保证不同终端宽度不崩溃。",
+	"type": "module",
+	"license": "MIT",
+	"keywords": [
+		"pi-package",
+		"pi",
+		"pi-coding-agent",
+		"i18n",
+		"localization",
+		"chinese",
+		"zh-cn",
+		"tui"
+	],
+	"pi": {
+		"extensions": [
+			"./index.ts"
+		]
+	},
+	"files": [
+		"index.ts",
+		"src",
+		"tests",
+		"README.md",
+		"LICENSE",
+		"CHANGELOG.md"
+	],
+	"peerDependencies": {
+		"@earendil-works/pi-coding-agent": "*",
+		"@earendil-works/pi-tui": "*"
+	},
+	"dependencies": {},
+	"engines": {
+		"node": ">=22.19.0"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/REPLACE_WITH_YOUR_USERNAME/pi-zh-cn.git"
+	},
+	"bugs": {
+		"url": "https://github.com/REPLACE_WITH_YOUR_USERNAME/pi-zh-cn/issues"
+	},
+	"homepage": "https://github.com/REPLACE_WITH_YOUR_USERNAME/pi-zh-cn#readme",
+	"scripts": {
+		"test": "node tests/run.mjs"
+	}
+}
