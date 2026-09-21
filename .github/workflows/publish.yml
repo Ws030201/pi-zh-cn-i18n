@@ -1,7 +1,13 @@
 name: Publish to npm
 
-# 打上形如 v1.0.0 的标签时自动发布。
-# 需要在仓库 Secrets 中配置 NPM_TOKEN。
+# 打上形如 v1.0.0 的标签时自动发布（Trusted Publishing / OIDC，无需长期 token）。
+#
+# 首次使用前，需要在 npm 上为该包配置 Trusted Publisher：
+#   npmjs.com → 包 pi-zh-cn-i18n → Settings → Trusted Publisher
+#     Publisher:            GitHub Actions
+#     Organization or user: Ws030201
+#     Repository:           pi-zh-cn-i18n
+#     Workflow filename:    publish.yml
 on:
   push:
     tags:
@@ -21,7 +27,9 @@ jobs:
           node-version: 22
           registry-url: https://registry.npmjs.org
 
+      # Trusted Publishing 需要 npm CLI >= 11.5.1
+      - name: Update npm
+        run: npm install -g npm@^11.15.0
+
       - name: Publish
-        run: npm publish --provenance --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm publish --provenance

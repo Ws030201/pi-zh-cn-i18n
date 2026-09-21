@@ -279,6 +279,24 @@ rules: [
 
 然后在 Pi 中执行 `/reload`。
 
+### 发布新版本（维护者）
+
+1. 修改 `package.json` 的 `version`，更新 `CHANGELOG.md`。
+2. 提交并推送：
+
+   ```bash
+   git add -A && git commit -m "chore: release vX.Y.Z" && git push origin main
+   git tag vX.Y.Z && git push origin vX.Y.Z
+   ```
+
+3. 标签会触发 [`.github/workflows/publish.yml`](./.github/workflows/publish.yml)，
+   通过 **Trusted Publishing（OIDC）** 自动发布，无需长期 token。
+
+> 首次使用前请在 npm 上配置 Trusted Publisher：
+> 包 `pi-zh-cn-i18n` → Settings → Trusted Publisher → GitHub Actions →
+> 用户 `Ws030201`、仓库 `pi-zh-cn-i18n`、workflow `publish.yml`。
+> npm 账号若开启了 2FA（如 Windows Hello），Trusted Publishing 可免去交互式验证码。
+
 ---
 
 ## 依赖说明
